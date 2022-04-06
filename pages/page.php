@@ -72,8 +72,10 @@
                     // His adjacent position
                     $x2 = $this->verteces_position[$adjacent_vertex_index]->get_x();
                     $y2 = $this->verteces_position[$adjacent_vertex_index]->get_y();
+                    
                     // Plot line
-                    echo get_line_tag($x1, $y1, $x2, $y2);
+                    //echo get_line_tag($x1, $y1, $x2, $y2);
+                    echo "<script>draw_line($x1, $y1, $x2, $y2)</script>";
                 }
             }
         }
@@ -119,7 +121,12 @@
         
     }
 
+    // Loading external scripts
+    echo "<script type = \"text/javascript\" src = \"../scripts/init.js\"></script>";
+    echo "<script type = \"text/javascript\" src = \"../scripts/draw_line.js\"></script>";
 
+    echo "<canvas id = \"main_canvas\"></canvas>";
+    echo "<script>init();</script>";
     echo "Page start.";
 
     /*$x = 300;
