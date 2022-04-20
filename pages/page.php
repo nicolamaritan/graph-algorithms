@@ -1,9 +1,5 @@
 <?php
-    interface Graph
-    {
-        public function get_verteces_number();
-        public function get_edges_number();
-    }
+
 
     class Position
     {
@@ -20,7 +16,7 @@
         function get_y(){return $this->y;}
     }
 
-    class AdjajencyListGraph implements Graph
+    class AdjajencyListGraph
     {
         private $verteces_number;
         private $edges_number;
@@ -28,10 +24,11 @@
         private $verteces_position;
         private $adj_list;
 
-        function __construct($verteces, $edges)
+
+        public function __construct()
         {
-            $this->verteces_number = $verteces;
-            $this->edges_number = $edges;
+            $this->verteces_number = 0;
+            $this->edges_number = 0;
 
             // Creating adjacency list and vertex position array
             $this->adj_list = array();
@@ -39,17 +36,29 @@
 
         }
 
+        /**
+         * Insert a vertex in the graph at position (x, y).
+         * @param int $x x vertex coordinate.
+         * @param int $y y vertex coordinate.
+         */
         public function insert_vertex($x, $y)
         {
+            // Insert Position element into verteces_position end
             array_push($this->verteces_position, new Position($x, $y));
+
+            // Add a new array adj_list end
             array_push($this->adj_list, array());
             $this->verteces_number++;
         }
 
         public function insert_edges($v, $w)
         {
+            // Add w to v list v->w connection
             array_push($this->adj_list[$v], $w);
+
+            // Specular. Add v to w list w->v connection
             array_push($this->adj_list[$w], $v);
+
             $this->edges_number++;
         }
 
@@ -73,8 +82,7 @@
                     $x2 = $this->verteces_position[$adjacent_vertex_index]->get_x();
                     $y2 = $this->verteces_position[$adjacent_vertex_index]->get_y();
                     
-                    // Plot line
-                    //echo get_line_tag($x1, $y1, $x2, $y2);
+                    // Plot line calling draw_line JavaScript
                     echo "<script>draw_line($x1, $y1, $x2, $y2)</script>";
                 }
             }
@@ -84,14 +92,17 @@
 
     /**
      * Returns a div tag containing an img tag with absolute position respect to body.
-     * @param type $x x pixels from left border.
-     * @param type $y y pixels from top border.
+     * @param int $x x pixels from left border.
+     * @param int $y y pixels from top border.
      */
     function get_circle_tag($x, $y)
     {
-        $radius = 25;
-        $div_style = "position: absolute; top: " . (string)$y .
-                        "px; left: " . (string)$x . "px;";
+        $radius = 30;
+        $edge_shift = 7;    // empirical, 7px of shift from upper left border
+        $shifted_x = $x + $edge_shift - $radius;
+        $shifted_y = $y + $edge_shift - $radius;
+        $div_style = "position: absolute; top: " . (string)$shifted_y .
+                        "px; left: " . (string)$shifted_x . "px;";
         $img_style = "width: " . (string)(2 * $radius) . "; height: " . (string)(2 * $radius) . ";";
 
         $div_open_tag = "<div style = \"" . $div_style . "\">";
@@ -100,46 +111,21 @@
         return $div_open_tag . $img_tag . $div_close_tag;
     }
 
-    function get_line_tag($x1, $y1, $x2, $y2)
-    {
-        /*$med_x = abs($x1+$x2)/2;
-        $med_y = abs($y1+$y2)/2;
-
-        $hr_style = "position: absolute; top: " . (string)$med_y .
-        "px; left: " . (string)$med_x . "px;";
-        $hr_style .= (" width: " . (string)sqrt($med_x*$med_x + $med_y*$med_y) . ";");
-
-        return "<hr style = \"" . $hr_style . "\">";
-        */
-
-        $med_x = abs($x1+$x2)/2;
-        $med_y = abs($y1+$y2)/2;
-
-        $line_tag = "<line x1 = \"" . $x1 . "\" y1 = \"" . $y1 . "\" x2 = \"" . $x2 . "\" y2 = \"" . $y2 . "\"
-        style=\"stroke:rgb(255,0,0);stroke-width:2\">";
-        return "<svg height=\"210\" width=\"500\">" . $line_tag . "Sorry, your browser does not support inline SVG." . "</svg>";
-        
-    }
 
     // Loading external scripts
     echo "<script type = \"text/javascript\" src = \"../scripts/init.js\"></script>";
     echo "<script type = \"text/javascript\" src = \"../scripts/draw_line.js\"></script>";
 
+    // Creating whole screen canvas
     echo "<canvas id = \"main_canvas\"></canvas>";
     echo "<script>init();</script>";
+
     echo "Page start.";
 
-    /*$x = 300;
-    $y = 500;
-
-    echo get_circle_tag(500, 500);
-    echo get_circle_tag(400, 500);
-    echo get_circle_tag(300, 500);
-    */
-
     // Gli arg per ora non influenzano
-    $graph = new AdjajencyListGraph(0, 0);
+    $graph = new AdjajencyListGraph();
 
+    /*
     $graph->insert_vertex(200, 400);
     $graph->insert_vertex(400, 200);
     $graph->insert_vertex(600, 400);
@@ -148,6 +134,19 @@
     $graph->insert_edges(0, 1);
     $graph->insert_edges(0, 2);
     $graph->insert_edges(2, 3);
+    */
+
+    $graph->insert_vertex(200, 400);
+    $graph->insert_vertex(350, 300);
+    $graph->insert_vertex(300, 500);
+    $graph->insert_vertex(500, 380);
+    $graph->insert_vertex(480, 480);
+
+    $graph->insert_edges(0, 1);
+    $graph->insert_edges(0, 2);
+    $graph->insert_edges(2, 3);
+    $graph->insert_edges(2, 4);
+    $graph->insert_edges(3, 4);
 
     $graph->print_graph();
 
