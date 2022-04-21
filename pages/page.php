@@ -16,7 +16,7 @@
         function get_y(){return $this->y;}
     }
 
-    class AdjajencyListGraph
+    class AdjacencyListGraph
     {
         private $verteces_number;
         private $edges_number;
@@ -48,6 +48,10 @@
 
             // Add a new array adj_list end
             array_push($this->adj_list, array());
+
+            // Add to screen added vertex
+            echo get_circle_tag($x, $y);
+
             $this->verteces_number++;
         }
 
@@ -58,6 +62,15 @@
 
             // Specular. Add v to w list w->v connection
             array_push($this->adj_list[$w], $v);
+
+
+            // i-th vertex position
+            $x1 = $this->verteces_position[$v]->get_x();
+            $y1 = $this->verteces_position[$v]->get_y();
+            // His adjacent position
+            $x2 = $this->verteces_position[$w]->get_x();
+            $y2 = $this->verteces_position[$w]->get_y();
+            echo "<script>draw_line($x1, $y1, $x2, $y2)</script>";
 
             $this->edges_number++;
         }
@@ -117,13 +130,23 @@
     echo "<script type = \"text/javascript\" src = \"../scripts/draw_line.js\"></script>";
 
     // Creating whole screen canvas
-    echo "<canvas id = \"main_canvas\"></canvas>";
+    echo "<canvas id = \"main_canvas\" style = \"border-style: solid;\"></canvas>";
     echo "<script>init();</script>";
 
-    echo "Page start.";
+    echo "
+    <h4>Input:</h4>
+    <form method = \"POST\">
+        <label>x coordinates</label><br>
+        <input type=\"text\" id = \"x_coordinates_id\" name = \"x_coordinates_name\"><br>
+        <label>y coordinates</label><br>
+        <input type=\"text\" id = \"y_coordinates_id\" name = \"y_coordinates_name\"><br>
+        <label>edges</label><br>
+        <input type=\"text\" id = \"edges_id\" name = \"edges_name\"><br>
+        <input type = \"submit\" value = \"Submit\" name = \"submit\">
+    </form>";
 
-    // Gli arg per ora non influenzano
-    $graph = new AdjajencyListGraph();
+
+    $graph = new AdjacencyListGraph();
 
     /*
     $graph->insert_vertex(200, 400);
@@ -135,19 +158,77 @@
     $graph->insert_edges(0, 2);
     $graph->insert_edges(2, 3);
     */
+    if(isset($_POST["submit"]))
+    {
+        // Verteces
+        $x_coordinates = $_POST["x_coordinates_name"];
+        echo $x_coordinates . "<br>";
 
+        $x_token = strtok($x_coordinates, " ");
+        $x_coordinates_array = array();
+        
+        while ($x_token)
+        {
+            echo "$x_token<br>";
+            array_push($x_coordinates_array, $x_token);
+            $x_token = strtok(" ");
+        }
+
+        $y_coordinates = $_POST["y_coordinates_name"];
+        echo $y_coordinates . "<br>";
+
+        $y_token = strtok($y_coordinates, " ");
+        $y_coordinates_array = array();
+        
+        while ($y_token)
+        {
+            echo "$y_token<br>";
+            array_push($y_coordinates_array, $y_token);
+            $y_token = strtok(" ");
+        }
+
+        $n = count($x_coordinates_array);
+        for ($i = 0; $i < $n; $i++)
+        {
+            $graph->insert_vertex($x_coordinates_array[$i], $y_coordinates_array[$i]);
+        }
+
+        // Edges
+        $edges = $_POST["edges_name"];
+        $edges_array = array();
+        echo $edges . "<br>";
+
+        $edge_token = strtok($edges, " ");
+        while ($edge_token)
+        {
+            echo "$edge_token<br>";
+            //array_push($edges_array, $edge_token);
+            $edge_token = strtok(" ");
+        }
+
+        /*$n = count($edges_array);
+        for ($i = 0; $i < $n - 1; $i++)
+        {
+            $graph->insert_edges($edge_token[(int)$i], $edge_token[(int)$i + 1]);
+        }*/
+    }
+
+    /*
     $graph->insert_vertex(200, 400);
     $graph->insert_vertex(350, 300);
     $graph->insert_vertex(300, 500);
     $graph->insert_vertex(500, 380);
     $graph->insert_vertex(480, 480);
+    */
 
+    /*
     $graph->insert_edges(0, 1);
     $graph->insert_edges(0, 2);
     $graph->insert_edges(2, 3);
     $graph->insert_edges(2, 4);
     $graph->insert_edges(3, 4);
+    */
 
-    $graph->print_graph();
+    //$graph->print_graph();
 
 ?>
