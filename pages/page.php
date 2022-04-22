@@ -15,13 +15,13 @@
     <h4>Input:</h4>
     <form method = \"POST\">
         <label>x coordinates</label><br>
-        <input type=\"text\" id = \"x_coordinates_id\" name = \"x_coordinates_name\"><br>
+        <input type=\"text\" id = \"x_coordinates_id\" name = \"x_coordinates_name\" style = \"width: 50%\"><br>
 
         <label>y coordinates</label><br>
-        <input type=\"text\" id = \"y_coordinates_id\" name = \"y_coordinates_name\"><br>
+        <input type=\"text\" id = \"y_coordinates_id\" name = \"y_coordinates_name\" style = \"width: 50%\"><br>
         
         <label>Edges</label><br>
-        <input type=\"text\" id = \"edges_id\" name = \"edges_name\"><br>
+        <input type=\"text\" id = \"edges_id\" name = \"edges_name\" style = \"width: 50%\"><br>
 
         <label>Algorithm</label><br>
         <select id = \"alg_id\" name = \"alg_name\" style = \"width:150px;\ size = 1\"><br>
@@ -29,18 +29,15 @@
         </select>
         <br>
         
-
         <input type = \"submit\" value = \"Submit\" name = \"submit\">
-
-        
-
 
     </form>";
 
 
+    // Graph instantiation
     $graph = new AdjacencyListGraph();
 
-
+    // Process input
     if(isset($_POST["submit"]))
     {
         // x coordinates
@@ -65,9 +62,11 @@
             $y_token = strtok(" ");
         }
 
+        // Counts the input coordinates...
         $n_x = count($x_coordinates_array);
         $n_y = count($y_coordinates_array);
 
+        // ... and if they're different throw error.
         if ($n_x != $n_y)
         {
             echo '<script type ="text/JavaScript">';  
@@ -87,7 +86,7 @@
         $edges_array = array();
         $edge_token = strtok($edges, " ");
 
-        // tokenizes edges in edges_array
+        // Tokenizes edges in edges_array
         while ($edge_token !== false)
         {
             array_push($edges_array, $edge_token);
@@ -100,6 +99,15 @@
         {
             $graph->insert_edges($edges_array[$i], $edges_array[$i + 1]);
         }
+
+        // Choose the alg based on form value
+        switch($_POST["alg_name"])
+        {
+            case "DFS":
+                $dfs_proc = new DFSProcessor($graph, 0);
+                break;
+        }
+        
     }
 
 ?>

@@ -74,9 +74,16 @@
             $this->edges_number++;
         }
 
+        public function get_adjacent($v)
+        {
+            return $this->adj_list[$v];
+        }
+
         public function get_verteces_number(){return $this->verteces_number;}
 
         public function get_edges_number(){return $this->edges_number;}
+
+        public function get_vertex_position($v){return $this->verteces_position[$v];}
 
         public function print_graph()
         {
@@ -105,13 +112,37 @@
     {
         private $s;
         private $marked;
-        private $discoveryEdges;
+        private $discovery_edge;
 
         public function __construct($graph, $s)
         {
             $this->s = $s;
-            $marked = array();
-            $marked = array_pad($marked, $graph->get_verteces_number(), false);
+            $this->marked = array();
+            $this->marked = array_pad($this->marked, $graph->get_verteces_number(), false);
+            $this->discovery_edge = array();
+            $this->discovery_edge = array_pad($this->discovery_edge, $graph->get_verteces_number(), -1);
+
+            $this->DFS($graph, $this->s);
+        }
+
+        private function DFS($graph, $v)
+        {
+            $this->marked[$v] = true;
+            foreach ($graph->get_adjacent($v) as $w)
+            {
+                if (!$this->marked[$w])
+                {
+                    $this->discovery_edge[$w] = $v;
+                    $x1 = $graph->get_vertex_position($v)->get_x();
+                    $x2 = $graph->get_vertex_position($w)->get_x();
+                    $y1 = $graph->get_vertex_position($v)->get_y();
+                    $y2 = $graph->get_vertex_position($w)->get_y();
+
+                    echo "<script>draw_line($x1, $y1, $x2, $y2, 3, 'red')</script>";
+                    $this->DFS($graph, $w);
+                }   
+            }
+
         }
     }
 
